@@ -1,0 +1,1 @@
+## Dupla: Felipe de Souza Machado e Ruan Lisboa Ulrich, ambos do sétimo periodo de CC na Uniandrade

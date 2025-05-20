@@ -1,51 +1,103 @@
+class Pocao:
+    """Classe genérica para poções de Cura ou Veneno."""
+    def __init__(self, tipo: str, potencia: int):
+        self.tipo = tipo.title()
+        self.potencia = potencia
+
+
 class Personagem:
-        def __init__(self, nome):
-            self.nome = nome
-            self.saude = 5
-            self.vivo = True
-            
-        def usar_pocao(self, pocao):
-            
-            if (pocao.tipo == "Cura"):
-                if (self.saude + pocao.potencia > 100):
-                    print("Nao precisar beber, saude vai ficar maior que 100")
-                else: 
-                    self.saude += pocao.potencia
-                    print(f"Personagem{self.nome} usou poção {pocao.tipo}")
-                    print(f"Curou {pocao.potencia} de saude {self.saude}")
+    """Representa um personagem com nome, saúde e estado de vida."""
+    def __init__(self, nome: str):
+        self.nome = nome
+        self.saude = 20
+        self.vivo = True
+
+    def usar_pocao(self, pocao: Pocao) -> None:
+        # Bloqueia outras poções se estiver morto
+        if not self.vivo:
+            print(f"{self.nome} está morto e não pode usar poções.")
+            return
+
+        # Poção de cura
+        if pocao.tipo.lower() == "cura":
+            cura_possivel = min(pocao.potencia, 20 - self.saude)
+            if cura_possivel <= 0:
+                print(f"{self.nome} não precisa se curar. Saúde já está em {self.saude}.")
             else:
-                if (self.saude - pocao.potencia <= 0):
-                    print("Voce morreu")
-                    return
-                else: 
-                    self.saude -= pocao.potencia
-                    print(f"Personagem{self.nome} usou poção {pocao.tipo}")
-                    print(f"Dano {pocao.potencia} saude {self.saude}")
-            
-            
-class PocaoVerde:
-        def __init__(self, tipo, potencia):
-            self.tipo = tipo
-            self.potencia = potencia
+                self.saude += cura_possivel
+                print(f"{self.nome} usou poção de {pocao.tipo} e recuperou {cura_possivel} de vida (saúde: {self.saude}).")
 
-class PocaoRoxa:
-        def __init__(self, tipo, potencia):
-            self.tipo = tipo
-            self.potencia = potencia
-    
-# instanciar Jogador
-p1 = Personagem("Chaves")
-pocao1 = PocaoVerde("Cura", 15)
-pocao2 = PocaoRoxa("Veneno", 20)
+        # Poção de veneno
+        elif pocao.tipo.lower() == "veneno":
+            dano = 15
+            if self.saude - dano <= 0:
+                self.saude = 0
+                self.vivo = False
+                print(f"{self.nome} usou poção de {pocao.tipo} e recebeu {dano} de dano (saúde: {self.saude}).")
+                print(f"{self.nome} morreu.")
+                mostrar_status(self)
+            else:
+                self.saude -= dano
+                print(f"{self.nome} usou poção de {pocao.tipo} e recebeu {dano} de dano (saúde: {self.saude}).")
 
-p1.usar_pocao(pocao1)
-p1.usar_pocao(pocao2)
+# Se o personagem ainda está vivo, decremente ao usar poção veneno
+# Pode usar poção veneno
+# Pode usar poção saúde
+# Se a saúde for <= 0
+#   personagem vivo = False
+#   informe que o personagem está morto e cancele a possibilidade de incrementar ou decrementar saúde
 
 
-# Se o persagem ainda está vivo, decremente ao usar poção veneno
-    # Pode usar poção veneno
-    # Pode usar poção saude
-# Se a saúde for <= 0 
-    # personagem vivo=False)
-    # informe personagem está morto, foi de "arrasta"
-    # cancele a possibilidade de incrementar ou decrementar saúde
+def mostrar_menu() -> None:
+    """Exibe o menu principal do jogo."""
+    print("""
++===========================================+
+|               MENU DO JOGO                |
++===========================================+
+| 1 - Usar Poção de Cura                    |
+| 2 - Usar Poção de Veneno                  |
+| 3 - Mostrar Status                        |
+| 4 - Sair                                  |
++===========================================+
+""")
+
+
+def mostrar_status(personagem: Personagem) -> None:
+    """Mostra o status atual do personagem."""
+    estado = "vivo" if personagem.vivo else "morto"
+    print(f"\n{personagem.nome} - Saúde: {personagem.saude} - Estado: {estado}\n")
+
+
+def processar_escolha(
+    escolha: str,
+    personagem: Personagem,
+    pocao_cura: Pocao,
+    pocao_veneno: Pocao
+) -> bool:
+    """
+    Processa a opção escolhida pelo player no menu.
+    """
+    if escolha == "1":
+        personagem.usar_pocao(pocao_cura)
+    elif escolha == "2":
+        personagem.usar_pocao(pocao_veneno)
+    elif escolha == "3":
+        mostrar_status(personagem)
+    elif escolha == "4":
+        print("Saindo do jogo. Até mais!")
+        return False
+    else:
+        print("Opção inválida. Tente novamente.")
+    return True
+
+
+if __name__ == "__main__":
+    p1 = Personagem("Chaves")
+    pocao_cura = Pocao("Cura", 15)
+    pocao_veneno = Pocao("Veneno", 15)
+
+    rodando = True
+    while rodando:
+        mostrar_menu()
+        escolha = input("Escolha uma opção (1-4): ")
+        rodando = processar_escolha(escolha, p1, pocao_cura, pocao_veneno)

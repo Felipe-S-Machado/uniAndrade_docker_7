@@ -11,6 +11,8 @@ class Personagem:
         self.nome = nome
         self.saude = 20
         self.vivo = True
+        self.inventario = Inventario()
+
 
     def usar_pocao(self, pocao: Pocao) -> None:
         # Bloqueia outras poções se estiver morto
@@ -30,12 +32,14 @@ class Personagem:
         # Poção de veneno
         elif pocao.tipo.lower() == "veneno":
             dano = 15
+            
             if self.saude - dano <= 0:
                 self.saude = 0
                 self.vivo = False
                 print(f"{self.nome} usou poção de {pocao.tipo} e recebeu {dano} de dano (saúde: {self.saude}).")
                 print(f"{self.nome} morreu.")
                 mostrar_status(self)
+
             else:
                 self.saude -= dano
                 print(f"{self.nome} usou poção de {pocao.tipo} e recebeu {dano} de dano (saúde: {self.saude}).")
@@ -101,3 +105,25 @@ if __name__ == "__main__":
         mostrar_menu()
         escolha = input("Escolha uma opção (1-4): ")
         rodando = processar_escolha(escolha, p1, pocao_cura, pocao_veneno)
+
+class Item:
+    def __init__(self, tipo: str , efeito: int ):
+        self.tipo = tipo
+        self.efeito = efeito
+
+class Inventario:
+    def __init__(self):
+        self.itens = []
+
+    def adicionar_item(self, item: Item):
+        if not item:
+            print("escolha um item para inserir")
+
+        self.itens.append(item)
+    
+    def listar_itens()
+
+faca = Item("Faca tramontina")
+inventario.adicionar_item(faca)
+inventario.listar_itens()
+

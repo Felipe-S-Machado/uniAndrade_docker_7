@@ -1,31 +1,23 @@
-from abc import ABC, abstractmethod
-class Jogador(ABC): #herança
-    def __init__(self, nome:str, dano:int):
+# jogadores/jogador.py
+
+class Jogador:
+    def __init__(self, nome, dano):
         self.nome = nome
         self.dano = dano
-        self.__saude = 100 # encapsulamento
+        self.saude = 100
+        self.saude_maxima = 100
+        # → Novo:
+        self.efeitos_ativos = []
 
-    @property # decorador retorna apenas como propriedade
-    # def get_saude(self):
-    def saude(self):
-        return self.__saude
-    
-    @saude.setter # decorador retorna apenas como propriedade
-    def saude(self, valor):
-    # def set_saude(self, valor):
-        # self.saude +=valor
-        self.saude += max(0, valor)
-        
-    @abstractmethod # obriga as classes filhas a implementarem
-    def atacar(self):
-        print(f"{self.nome} atacou!")
+    def adicionar_efeito(self, efeito):
+        self.efeitos_ativos.append(efeito)
 
-    @abstractmethod # obriga as classes filhas a implementarem
-    def defender(self):
-        print(f"{self.nome} defendeu!")
+    def get_buff(self, effect_type):
+        return sum(e['value'] for e in self.efeitos_ativos if e['type'] == effect_type)
 
-if __name__ == '__main__':
-    p1 = Jogador("Jow", 50)
-    # p1.atacar(p1.get_saude())
-    p1.atacar()
-    print(p1.saude)
+    def atualizar_efeitos(self):
+        for e in self.efeitos_ativos[:]:
+            e['remaining_turns'] -= 1
+            if e['remaining_turns'] <= 0:
+                self.efeitos_ativos.remove(e)
+                print(f"🔔 Efeito de {e['type']} expirou em {self.nome}!")

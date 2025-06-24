@@ -1,1 +1,1 @@
-Trabalho feito em dupla pelos alunos: Felipe de Souza. Ruan Lisboa
+atividade realizada pela dupla: Felipe de Souza Machado e Ruan Lisboa Ulrich
